@@ -40,15 +40,15 @@
     "file-system"
   ],
   "dependencies": {
-    "pify": "^2.3.0"
+    "pify": "^3.0.0"
   },
   "devDependencies": {
     "ava": "*",
     "codecov": "^2.1.0",
     "graceful-fs": "^4.1.11",
     "nyc": "^10.2.0",
-    "path-type": "^2.0.0",
-    "tempy": "^0.1.0",
+    "path-type": "^3.0.0",
+    "tempy": "^0.2.1",
     "xo": "*"
   }
 }
