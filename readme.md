@@ -16,7 +16,7 @@
 ## Install
 
 ```
-$ npm install --save make-dir
+$ npm install make-dir
 ```
 
 
