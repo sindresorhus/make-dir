@@ -44,9 +44,9 @@
 	},
 	"devDependencies": {
 		"ava": "*",
-		"codecov": "^2.1.0",
+		"codecov": "^3.0.0",
 		"graceful-fs": "^4.1.11",
-		"nyc": "^10.2.0",
+		"nyc": "^11.3.0",
 		"path-type": "^3.0.0",
 		"tempy": "^0.2.1",
 		"xo": "*"
