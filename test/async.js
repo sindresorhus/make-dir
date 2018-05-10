@@ -75,7 +75,7 @@ test('handles null bytes in path', async t => {
 
 test.serial('handles invalid path characters', async t => {
 	// We do this to please `nyc`
-	const platform = process.platform;
+	const {platform} = process;
 	Object.defineProperty(process, 'platform', {
 		value: 'win32'
 	});

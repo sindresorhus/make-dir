@@ -26,6 +26,7 @@ module.exports = (input, opts) => Promise.resolve().then(() => {
 	checkPath(input);
 	opts = Object.assign({}, defaults, opts);
 
+	// TODO: Use util.promisify when targeting Node.js 8
 	const mkdir = pify(opts.fs.mkdir);
 	const stat = pify(opts.fs.stat);
 
