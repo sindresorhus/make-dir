@@ -73,7 +73,7 @@ test('handles null bytes in path', t => {
 	const err = t.throws(() => {
 		m.sync(dir);
 	}, /null bytes/);
-	t.is(err.code, 'ENOENT');
+	t.regex(err.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
 });
 
 if (process.platform === 'win32') {

@@ -70,7 +70,7 @@ test('race many', async t => {
 test('handles null bytes in path', async t => {
 	const dir = path.join(tempy.directory(), 'foo\u0000bar');
 	const err = await t.throws(m(dir), /null bytes/);
-	t.is(err.code, 'ENOENT');
+	t.regex(err.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
 });
 
 test.serial('handles invalid path characters', async t => {
