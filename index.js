@@ -31,7 +31,10 @@ module.exports = (input, opts) => Promise.resolve().then(() => {
 	const stat = pify(opts.fs.stat);
 
 	const make = pth => {
-		return mkdir(pth, opts.mode)
+		return mkdir(pth, {
+			mode: opts.mode,
+			recursive: true
+		})
 			.then(() => pth)
 			.catch(err => {
 				if (err.code === 'ENOENT') {
@@ -59,7 +62,10 @@ module.exports.sync = (input, opts) => {
 
 	const make = pth => {
 		try {
-			opts.fs.mkdirSync(pth, opts.mode);
+			opts.fs.mkdirSync(pth, {
+				mode: opts.mode,
+				recursive: true
+			});
 		} catch (err) {
 			if (err.code === 'ENOENT') {
 				if (err.message.includes('null bytes') || path.dirname(pth) === pth) {
