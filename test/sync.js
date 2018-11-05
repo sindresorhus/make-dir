@@ -46,9 +46,10 @@ test('file exits', t => {
 });
 
 test('root dir', t => {
+	const mode = fs.statSync('/').mode & 0o777;
 	const dir = m.sync('/');
 	t.true(dir.length > 0);
-	assertDir(t, dir);
+	assertDir(t, dir, mode);
 });
 
 test('race two', t => {

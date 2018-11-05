@@ -40,7 +40,7 @@
 		"file-system"
 	],
 	"dependencies": {
-		"pify": "^3.0.0"
+		"pify": "^4.0.1"
 	},
 	"devDependencies": {
 		"ava": "*",
