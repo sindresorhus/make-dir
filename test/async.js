@@ -44,9 +44,10 @@ test('file exits', async t => {
 });
 
 test('root dir', async t => {
+	const mode = fs.statSync('/').mode & 0o777;
 	const dir = await m('/');
 	t.true(dir.length > 0);
-	assertDir(t, dir);
+	assertDir(t, dir, mode);
 });
 
 test('race two', async t => {
