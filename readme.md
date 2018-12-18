@@ -11,6 +11,7 @@
 - CI-tested on macOS, Linux, and Windows
 - Actively maintained
 - Doesn't bundle a CLI
+- Uses native `fs.mkdir` or `fs.mkdirSync` with [recursive option](https://nodejs.org/dist/latest/docs/api/fs.html#fs_fs_mkdir_path_options_callback) in node.js >= 10.12.0 unless [overridden](#fs)
 
 
 ## Install
@@ -104,6 +105,9 @@ Default: `require('fs')`
 
 Use a custom `fs` implementation. For example [`graceful-fs`](https://github.com/isaacs/node-graceful-fs).
 
+A custom `fs` implementation will block use of the `recursive` option if `fs.mkdir` or `fs.mkdirSync`
+is not the native function.
+
 
 ## Related
 
@@ -113,6 +117,8 @@ Use a custom `fs` implementation. For example [`graceful-fs`](https://github.com
 - [cpy](https://github.com/sindresorhus/cpy) - Copy files
 - [cpy-cli](https://github.com/sindresorhus/cpy-cli) - Copy files on the command-line
 - [move-file](https://github.com/sindresorhus/move-file) - Move a file
+- [fs.mkdir](https://nodejs.org/dist/latest/docs/api/fs.html#fs_fs_mkdir_path_options_callback) - native fs.mkdir
+- [fs.mkdirSync](https://nodejs.org/dist/latest/docs/api/fs.html#fs_fs_mkdirsync_path_options) - native fs.mkdirSync
 
 
 ## License
