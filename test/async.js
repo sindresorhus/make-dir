@@ -39,7 +39,7 @@ test('dir exists', async t => {
 test('file exits', async t => {
 	const fp = tempy.file();
 	fs.writeFileSync(fp, '');
-	const err = await t.throws(m(fp));
+	const err = await t.throwsAsync(m(fp));
 	t.is(err.code, 'EEXIST');
 });
 
@@ -70,7 +70,7 @@ test('race many', async t => {
 
 test('handles null bytes in path', async t => {
 	const dir = path.join(tempy.directory(), 'foo\u0000bar');
-	const err = await t.throws(m(dir), /null bytes/);
+	const err = await t.throwsAsync(m(dir), /null bytes/);
 	t.regex(err.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
 });
 
@@ -85,7 +85,7 @@ test.serial('handles invalid path characters', async t => {
 	await m(tempy.directory());
 
 	const dir = path.join(tempy.directory(), 'foo"bar');
-	const err = await t.throws(m(dir), /invalid characters/);
+	const err = await t.throwsAsync(m(dir), /invalid characters/);
 	t.is(err.code, 'EINVAL');
 
 	Object.defineProperty(process, 'platform', {
@@ -96,7 +96,7 @@ test.serial('handles invalid path characters', async t => {
 if (process.platform === 'win32') {
 	test('handles non-existent root', async t => {
 		// We assume the `o:\` drive doesn't exist on Windows
-		const err = await t.throws(m('o:\\foo'), /no such file or directory/);
+		const err = await t.throwsAsync(m('o:\\foo'), /no such file or directory/);
 		t.is(err.code, 'ENOENT');
 	});
 }
