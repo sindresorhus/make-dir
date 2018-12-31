@@ -15,28 +15,28 @@ const checkPath = pth => {
 		const pathHasInvalidWinCharacters = /[<>:"|?*]/.test(pth.replace(path.parse(pth).root, ''));
 
 		if (pathHasInvalidWinCharacters) {
-			const err = new Error(`Path contains invalid characters: ${pth}`);
-			err.code = 'EINVAL';
-			throw err;
+			const error = new Error(`Path contains invalid characters: ${pth}`);
+			error.code = 'EINVAL';
+			throw error;
 		}
 	}
 };
 
-module.exports = (input, opts) => Promise.resolve().then(() => {
+module.exports = (input, options) => Promise.resolve().then(() => {
 	checkPath(input);
-	opts = Object.assign({}, defaults, opts);
+	options = Object.assign({}, defaults, options);
 
 	// TODO: Use util.promisify when targeting Node.js 8
-	const mkdir = pify(opts.fs.mkdir);
-	const stat = pify(opts.fs.stat);
+	const mkdir = pify(options.fs.mkdir);
+	const stat = pify(options.fs.stat);
 
 	const make = pth => {
-		return mkdir(pth, opts.mode)
+		return mkdir(pth, options.mode)
 			.then(() => pth)
-			.catch(err => {
-				if (err.code === 'ENOENT') {
-					if (err.message.includes('null bytes') || path.dirname(pth) === pth) {
-						throw err;
+			.catch(error => {
+				if (error.code === 'ENOENT') {
+					if (error.message.includes('null bytes') || path.dirname(pth) === pth) {
+						throw error;
 					}
 
 					return make(path.dirname(pth)).then(() => make(pth));
@@ -45,7 +45,7 @@ module.exports = (input, opts) => Promise.resolve().then(() => {
 				return stat(pth)
 					.then(stats => stats.isDirectory() ? pth : Promise.reject())
 					.catch(() => {
-						throw err;
+						throw error;
 					});
 			});
 	};
@@ -53,17 +53,17 @@ module.exports = (input, opts) => Promise.resolve().then(() => {
 	return make(path.resolve(input));
 });
 
-module.exports.sync = (input, opts) => {
+module.exports.sync = (input, options) => {
 	checkPath(input);
-	opts = Object.assign({}, defaults, opts);
+	options = Object.assign({}, defaults, options);
 
 	const make = pth => {
 		try {
-			opts.fs.mkdirSync(pth, opts.mode);
-		} catch (err) {
-			if (err.code === 'ENOENT') {
-				if (err.message.includes('null bytes') || path.dirname(pth) === pth) {
-					throw err;
+			options.fs.mkdirSync(pth, options.mode);
+		} catch (error) {
+			if (error.code === 'ENOENT') {
+				if (error.message.includes('null bytes') || path.dirname(pth) === pth) {
+					throw error;
 				}
 
 				make(path.dirname(pth));
@@ -71,11 +71,11 @@ module.exports.sync = (input, opts) => {
 			}
 
 			try {
-				if (!opts.fs.statSync(pth).isDirectory()) {
+				if (!options.fs.statSync(pth).isDirectory()) {
 					throw new Error('The path is not a directory');
 				}
 			} catch (_) {
-				throw err;
+				throw error;
 			}
 		}
 

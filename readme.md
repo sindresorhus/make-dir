@@ -32,10 +32,12 @@ $ tree
 ```js
 const makeDir = require('make-dir');
 
-makeDir('unicorn/rainbow/cake').then(path => {
+(async () => {
+	const path = await makeDir('unicorn/rainbow/cake');
+
 	console.log(path);
 	//=> '/Users/sindresorhus/fun/unicorn/rainbow/cake'
-});
+})();
 ```
 
 ```
@@ -51,10 +53,12 @@ Multiple directories:
 ```js
 const makeDir = require('make-dir');
 
-Promise.all([
-	makeDir('unicorn/rainbow')
-	makeDir('foo/bar')
-]).then(paths => {
+(async () => {
+	const paths = await Promise.all([
+		makeDir('unicorn/rainbow')
+		makeDir('foo/bar')
+	]);
+
 	console.log(paths);
 	/*
 	[
@@ -62,7 +66,7 @@ Promise.all([
 		'/Users/sindresorhus/fun/foo/bar'
 	]
 	*/
-});
+})();
 ```
 
 

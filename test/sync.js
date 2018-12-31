@@ -4,34 +4,34 @@ import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
 import {getFixture, assertDir} from './helpers/util';
-import m from '..';
+import makeDir from '..';
 
 test('main', t => {
 	const dir = getFixture();
-	const madeDir = m.sync(dir);
+	const madeDir = makeDir.sync(dir);
 	t.true(madeDir.length > 0);
 	assertDir(t, madeDir);
 });
 
 test('`fs` option', t => {
 	const dir = getFixture();
-	m.sync(dir, {fs: gracefulFs});
+	makeDir.sync(dir, {fs: gracefulFs});
 	assertDir(t, dir);
 });
 
 test('`mode` option', t => {
 	const dir = getFixture();
 	const mode = 0o744;
-	m.sync(dir, {mode});
+	makeDir.sync(dir, {mode});
 	assertDir(t, dir, mode);
 
 	// Ensure it's writable
-	m.sync(dir);
+	makeDir.sync(dir);
 	assertDir(t, dir, mode);
 });
 
 test('dir exists', t => {
-	const dir = m.sync(tempy.directory());
+	const dir = makeDir.sync(tempy.directory());
 	t.true(dir.length > 0);
 	assertDir(t, dir);
 });
@@ -39,23 +39,22 @@ test('dir exists', t => {
 test('file exits', t => {
 	const fp = tempy.file();
 	fs.writeFileSync(fp, '');
-	const err = t.throws(() => {
-		m.sync(fp);
-	});
-	t.is(err.code, 'EEXIST');
+	t.throws(() => {
+		makeDir.sync(fp);
+	}, {code: 'EEXIST'});
 });
 
 test('root dir', t => {
 	const mode = fs.statSync('/').mode & 0o777;
-	const dir = m.sync('/');
+	const dir = makeDir.sync('/');
 	t.true(dir.length > 0);
 	assertDir(t, dir, mode);
 });
 
 test('race two', t => {
 	const dir = getFixture();
-	m.sync(dir);
-	m.sync(dir);
+	makeDir.sync(dir);
+	makeDir.sync(dir);
 	assertDir(t, dir);
 });
 
@@ -63,7 +62,7 @@ test('race many', t => {
 	const dir = getFixture();
 
 	for (let i = 0; i < 100; i++) {
-		m.sync(dir);
+		makeDir.sync(dir);
 	}
 
 	assertDir(t, dir);
@@ -71,18 +70,21 @@ test('race many', t => {
 
 test('handles null bytes in path', t => {
 	const dir = path.join(tempy.directory(), 'foo\u0000bar');
-	const err = t.throws(() => {
-		m.sync(dir);
+
+	const error = t.throws(() => {
+		makeDir.sync(dir);
 	}, /null bytes/);
-	t.regex(err.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
+	t.regex(error.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
 });
 
 if (process.platform === 'win32') {
 	test('handles non-existent root', t => {
 		// We assume the `o:\` drive doesn't exist on Windows
-		const err = t.throws(() => {
-			m.sync('o:\\foo');
-		}, /no such file or directory/);
-		t.is(err.code, 'ENOENT');
+		t.throws(() => {
+			makeDir.sync('o:\\foo');
+		}, {
+			code: 'ENOENT',
+			message: /no such file or directory/
+		});
 	});
 }
