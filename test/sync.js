@@ -3,7 +3,7 @@ import path from 'path';
 import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
-import {getFixture, assertDir} from './helpers/util';
+import {getFixture, assertDir, customFsOpt} from './helpers/util';
 import makeDir from '..';
 
 test('main', t => {
@@ -13,10 +13,17 @@ test('main', t => {
 	assertDir(t, madeDir);
 });
 
-test('`fs` option', t => {
+test('`fs` option graceful-fs', t => {
 	const dir = getFixture();
 	makeDir.sync(dir, {fs: gracefulFs});
 	assertDir(t, dir);
+});
+
+test('`fs` option custom', t => {
+	const dir = getFixture();
+	const madeDir = makeDir.sync(dir, customFsOpt);
+	t.true(madeDir.length > 0);
+	assertDir(t, madeDir);
 });
 
 test('`mode` option', t => {
@@ -45,10 +52,20 @@ test('file exits', t => {
 });
 
 test('root dir', t => {
-	const mode = fs.statSync('/').mode & 0o777;
-	const dir = makeDir.sync('/');
-	t.true(dir.length > 0);
-	assertDir(t, dir, mode);
+	if (process.platform === 'win32') {
+		// Do not assume that C: is current drive.
+		t.throws(() => {
+			makeDir.sync('/');
+		}, {
+			code: 'EPERM',
+			message: /operation not permitted, mkdir '[A-Za-z]:\\'/
+		});
+	} else {
+		const mode = fs.statSync('/').mode & 0o777;
+		const dir = makeDir.sync('/');
+		t.true(dir.length > 0);
+		assertDir(t, dir, mode);
+	}
 });
 
 test('race two', t => {
@@ -83,8 +100,8 @@ if (process.platform === 'win32') {
 		t.throws(() => {
 			makeDir.sync('o:\\foo');
 		}, {
-			code: 'ENOENT',
-			message: /no such file or directory/
+			code: 'EPERM',
+			message: /operation not permitted, mkdir/
 		});
 	});
 }

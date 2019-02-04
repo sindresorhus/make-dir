@@ -3,7 +3,7 @@ import path from 'path';
 import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
-import {getFixture, assertDir} from './helpers/util';
+import {getFixture, assertDir, customFsOpt} from './helpers/util';
 import makeDir from '..';
 
 test('main', async t => {
@@ -13,10 +13,17 @@ test('main', async t => {
 	assertDir(t, madeDir);
 });
 
-test('`fs` option', async t => {
+test('`fs` option graceful-fs', async t => {
 	const dir = getFixture();
 	await makeDir(dir, {fs: gracefulFs});
 	assertDir(t, dir);
+});
+
+test('`fs` option custom', async t => {
+	const dir = getFixture();
+	const madeDir = await makeDir(dir, customFsOpt);
+	t.true(madeDir.length > 0);
+	assertDir(t, madeDir);
 });
 
 test('`mode` option', async t => {
@@ -43,10 +50,18 @@ test('file exits', async t => {
 });
 
 test('root dir', async t => {
-	const mode = fs.statSync('/').mode & 0o777;
-	const dir = await makeDir('/');
-	t.true(dir.length > 0);
-	assertDir(t, dir, mode);
+	if (process.platform === 'win32') {
+		// Do not assume that C: is current drive.
+		await t.throwsAsync(makeDir('/'), {
+			code: 'EPERM',
+			message: /operation not permitted, mkdir '[A-Za-z]:\\'/
+		});
+	} else {
+		const mode = fs.statSync('/').mode & 0o777;
+		const dir = await makeDir('/');
+		t.true(dir.length > 0);
+		assertDir(t, dir, mode);
+	}
 });
 
 test('race two', async t => {
@@ -99,8 +114,8 @@ if (process.platform === 'win32') {
 	test('handles non-existent root', async t => {
 		// We assume the `o:\` drive doesn't exist on Windows
 		await t.throwsAsync(makeDir('o:\\foo'), {
-			code: 'ENOENT',
-			message: /no such file or directory/
+			code: 'EPERM',
+			message: /operation not permitted, mkdir/
 		});
 	});
 }

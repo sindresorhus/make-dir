@@ -2,11 +2,14 @@
 const fs = require('fs');
 const path = require('path');
 const pify = require('pify');
+const semver = require('semver');
 
 const defaults = {
 	mode: 0o777 & (~process.umask()),
 	fs
 };
+
+const mkdirOptsObj = semver.satisfies(process.version, '>=10.12.0');
 
 // https://github.com/nodejs/node/issues/8987
 // https://github.com/libuv/libuv/pull/1088
@@ -22,6 +25,18 @@ const checkPath = pth => {
 	}
 };
 
+const permissionError = pth => {
+	// This replicates the exception of mkdir with native recusive option when run on
+	// an invalid drive under Windows.
+	const error = new Error('operation not permitted, mkdir \'' + pth + '\'');
+	error.code = 'EPERM';
+	error.errno = -4048;
+	error.path = pth;
+	error.syscall = 'mkdir';
+
+	return error;
+};
+
 module.exports = (input, options) => Promise.resolve().then(() => {
 	checkPath(input);
 	options = Object.assign({}, defaults, options);
@@ -30,12 +45,29 @@ module.exports = (input, options) => Promise.resolve().then(() => {
 	const mkdir = pify(options.fs.mkdir);
 	const stat = pify(options.fs.stat);
 
+	if (mkdirOptsObj && options.fs.mkdir === fs.mkdir) {
+		const pth = path.resolve(input);
+
+		return mkdir(pth, {
+			mode: options.mode,
+			recursive: true
+		}).then(() => pth);
+	}
+
 	const make = pth => {
 		return mkdir(pth, options.mode)
 			.then(() => pth)
 			.catch(error => {
+				if (error.code === 'EPERM') {
+					throw error;
+				}
+
 				if (error.code === 'ENOENT') {
-					if (error.message.includes('null bytes') || path.dirname(pth) === pth) {
+					if (path.dirname(pth) === pth) {
+						throw permissionError(pth);
+					}
+
+					if (error.message.includes('null bytes')) {
 						throw error;
 					}
 
@@ -57,12 +89,31 @@ module.exports.sync = (input, options) => {
 	checkPath(input);
 	options = Object.assign({}, defaults, options);
 
+	if (mkdirOptsObj && options.fs.mkdirSync === fs.mkdirSync) {
+		const pth = path.resolve(input);
+
+		fs.mkdirSync(pth, {
+			mode: options.mode,
+			recursive: true
+		});
+
+		return pth;
+	}
+
 	const make = pth => {
 		try {
 			options.fs.mkdirSync(pth, options.mode);
 		} catch (error) {
+			if (error.code === 'EPERM') {
+				throw error;
+			}
+
 			if (error.code === 'ENOENT') {
-				if (error.message.includes('null bytes') || path.dirname(pth) === pth) {
+				if (path.dirname(pth) === pth) {
+					throw permissionError(pth);
+				}
+
+				if (error.message.includes('null bytes')) {
 					throw error;
 				}
 
