@@ -9,7 +9,7 @@ const defaults = {
 	fs
 };
 
-const mkdirOptsObj = semver.satisfies(process.version, '>=10.12.0');
+const useNativeRecursiveOption = semver.satisfies(process.version, '>=10.12.0');
 
 // https://github.com/nodejs/node/issues/8987
 // https://github.com/libuv/libuv/pull/1088
@@ -26,14 +26,13 @@ const checkPath = pth => {
 };
 
 const permissionError = pth => {
-	// This replicates the exception of mkdir with native recusive option when run on
-	// an invalid drive under Windows.
-	const error = new Error('operation not permitted, mkdir \'' + pth + '\'');
+	// This replicates the exception of `fs.mkdir` with native the
+	// `recusive` option when run on an invalid drive under Windows.
+	const error = new Error(`operation not permitted, mkdir '${pth}'`);
 	error.code = 'EPERM';
 	error.errno = -4048;
 	error.path = pth;
 	error.syscall = 'mkdir';
-
 	return error;
 };
 
@@ -45,7 +44,7 @@ module.exports = (input, options) => Promise.resolve().then(() => {
 	const mkdir = pify(options.fs.mkdir);
 	const stat = pify(options.fs.stat);
 
-	if (mkdirOptsObj && options.fs.mkdir === fs.mkdir) {
+	if (useNativeRecursiveOption && options.fs.mkdir === fs.mkdir) {
 		const pth = path.resolve(input);
 
 		return mkdir(pth, {
@@ -89,7 +88,7 @@ module.exports.sync = (input, options) => {
 	checkPath(input);
 	options = Object.assign({}, defaults, options);
 
-	if (mkdirOptsObj && options.fs.mkdirSync === fs.mkdirSync) {
+	if (useNativeRecursiveOption && options.fs.mkdirSync === fs.mkdirSync) {
 		const pth = path.resolve(input);
 
 		fs.mkdirSync(pth, {

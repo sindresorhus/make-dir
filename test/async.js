@@ -3,44 +3,44 @@ import path from 'path';
 import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
-import {getFixture, assertDir, customFsOpt} from './helpers/util';
+import {getFixture, assertDirectory, customFsOptions} from './helpers/util';
 import makeDir from '..';
 
 test('main', async t => {
 	const dir = getFixture();
 	const madeDir = await makeDir(dir);
 	t.true(madeDir.length > 0);
-	assertDir(t, madeDir);
+	assertDirectory(t, madeDir);
 });
 
-test('`fs` option graceful-fs', async t => {
+test('`fs` option - graceful-fs', async t => {
 	const dir = getFixture();
 	await makeDir(dir, {fs: gracefulFs});
-	assertDir(t, dir);
+	assertDirectory(t, dir);
 });
 
-test('`fs` option custom', async t => {
+test('`fs` option - custom', async t => {
 	const dir = getFixture();
-	const madeDir = await makeDir(dir, customFsOpt);
+	const madeDir = await makeDir(dir, customFsOptions);
 	t.true(madeDir.length > 0);
-	assertDir(t, madeDir);
+	assertDirectory(t, madeDir);
 });
 
 test('`mode` option', async t => {
 	const dir = getFixture();
 	const mode = 0o744;
 	await makeDir(dir, {mode});
-	assertDir(t, dir, mode);
+	assertDirectory(t, dir, mode);
 
 	// Ensure it's writable
 	await makeDir(dir);
-	assertDir(t, dir, mode);
+	assertDirectory(t, dir, mode);
 });
 
 test('dir exists', async t => {
 	const dir = await makeDir(tempy.directory());
 	t.true(dir.length > 0);
-	assertDir(t, dir);
+	assertDirectory(t, dir);
 });
 
 test('file exits', async t => {
@@ -51,7 +51,7 @@ test('file exits', async t => {
 
 test('root dir', async t => {
 	if (process.platform === 'win32') {
-		// Do not assume that C: is current drive.
+		// Do not assume that `C:` is current drive
 		await t.throwsAsync(makeDir('/'), {
 			code: 'EPERM',
 			message: /operation not permitted, mkdir '[A-Za-z]:\\'/
@@ -60,14 +60,14 @@ test('root dir', async t => {
 		const mode = fs.statSync('/').mode & 0o777;
 		const dir = await makeDir('/');
 		t.true(dir.length > 0);
-		assertDir(t, dir, mode);
+		assertDirectory(t, dir, mode);
 	}
 });
 
 test('race two', async t => {
 	const dir = getFixture();
 	await Promise.all([makeDir(dir), makeDir(dir)]);
-	assertDir(t, dir);
+	assertDirectory(t, dir);
 });
 
 test('race many', async t => {
@@ -79,7 +79,7 @@ test('race many', async t => {
 	}
 
 	await Promise.all(all);
-	assertDir(t, dir);
+	assertDirectory(t, dir);
 });
 
 test('handles null bytes in path', async t => {
