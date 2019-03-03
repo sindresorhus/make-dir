@@ -36,7 +36,7 @@ const permissionError = pth => {
 	return error;
 };
 
-module.exports = (input, options) => Promise.resolve().then(() => {
+const makeDir = (input, options) => Promise.resolve().then(() => {
 	checkPath(input);
 	options = Object.assign({}, defaults, options);
 
@@ -83,6 +83,9 @@ module.exports = (input, options) => Promise.resolve().then(() => {
 
 	return make(path.resolve(input));
 });
+
+module.exports = makeDir;
+module.exports.default = makeDir;
 
 module.exports.sync = (input, options) => {
 	checkPath(input);
