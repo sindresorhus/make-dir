@@ -10,7 +10,7 @@
 		"url": "sindresorhus.com"
 	},
 	"engines": {
-		"node": ">=6"
+		"node": ">=8"
 	},
 	"scripts": {
 		"test": "xo && nyc ava && tsd-check"
@@ -41,7 +41,6 @@
 		"file-system"
 	],
 	"dependencies": {
-		"pify": "^4.0.1",
 		"semver": "^5.6.0"
 	},
 	"devDependencies": {
@@ -51,7 +50,7 @@
 		"codecov": "^3.0.0",
 		"graceful-fs": "^4.1.11",
 		"nyc": "^13.1.0",
-		"path-type": "^3.0.0",
+		"path-type": "^4.0.0",
 		"tempy": "^0.2.1",
 		"tsd-check": "^0.3.0",
 		"xo": "^0.24.0"
