@@ -85,6 +85,7 @@ const makeDir = (input, options) => Promise.resolve().then(() => {
 });
 
 module.exports = makeDir;
+// TODO: Remove this for the next major release
 module.exports.default = makeDir;
 
 module.exports.sync = (input, options) => {
