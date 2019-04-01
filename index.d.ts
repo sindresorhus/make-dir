@@ -61,9 +61,6 @@ declare const makeDir: {
 	@returns The path to the created directory.
 	*/
 	sync(path: string, options?: makeDir.Options): string;
-
-	// TODO: Remove this for the next major release
-	default: typeof makeDir;
 };
 
 export = makeDir;

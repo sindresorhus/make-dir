@@ -94,8 +94,6 @@ const makeDir = async (input, options) => {
 };
 
 module.exports = makeDir;
-// TODO: Remove this for the next major release
-module.exports.default = makeDir;
 
 module.exports.sync = (input, options) => {
 	checkPath(input);
