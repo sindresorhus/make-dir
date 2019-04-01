@@ -11,7 +11,7 @@ export const assertDirectory = (t, directory, mode = 0o777 & (~process.umask()))
 		mode = 0o666;
 	}
 
-	t.true(pathType.dirSync(directory));
+	t.true(pathType.isDirectorySync(directory));
 	t.is(fs.statSync(directory).mode & 0o777, mode);
 };
 

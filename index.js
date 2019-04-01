@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const pify = require('pify');
+const {promisify} = require('util');
 const semver = require('semver');
 
 const defaults = {
@@ -36,53 +36,62 @@ const permissionError = pth => {
 	return error;
 };
 
-const makeDir = (input, options) => Promise.resolve().then(() => {
+const makeDir = async (input, options) => {
 	checkPath(input);
-	options = Object.assign({}, defaults, options);
+	options = {
+		...defaults,
+		...options
+	};
 
-	// TODO: Use util.promisify when targeting Node.js 8
-	const mkdir = pify(options.fs.mkdir);
-	const stat = pify(options.fs.stat);
+	const mkdir = promisify(options.fs.mkdir);
+	const stat = promisify(options.fs.stat);
 
 	if (useNativeRecursiveOption && options.fs.mkdir === fs.mkdir) {
 		const pth = path.resolve(input);
 
-		return mkdir(pth, {
+		await mkdir(pth, {
 			mode: options.mode,
 			recursive: true
-		}).then(() => pth);
+		});
+
+		return pth;
 	}
 
-	const make = pth => {
-		return mkdir(pth, options.mode)
-			.then(() => pth)
-			.catch(error => {
-				if (error.code === 'EPERM') {
+	const make = async pth => {
+		try {
+			await mkdir(pth, options.mode);
+
+			return pth;
+		} catch (error) {
+			if (error.code === 'EPERM') {
+				throw error;
+			}
+
+			if (error.code === 'ENOENT') {
+				if (path.dirname(pth) === pth) {
+					throw permissionError(pth);
+				}
+
+				if (error.message.includes('null bytes')) {
 					throw error;
 				}
 
-				if (error.code === 'ENOENT') {
-					if (path.dirname(pth) === pth) {
-						throw permissionError(pth);
-					}
+				await make(path.dirname(pth));
 
-					if (error.message.includes('null bytes')) {
-						throw error;
-					}
+				return make(pth);
+			}
 
-					return make(path.dirname(pth)).then(() => make(pth));
-				}
+			const stats = await stat(pth);
+			if (!stats.isDirectory()) {
+				throw error;
+			}
 
-				return stat(pth)
-					.then(stats => stats.isDirectory() ? pth : Promise.reject())
-					.catch(() => {
-						throw error;
-					});
-			});
+			return pth;
+		}
 	};
 
 	return make(path.resolve(input));
-});
+};
 
 module.exports = makeDir;
 // TODO: Remove this for the next major release
@@ -90,7 +99,10 @@ module.exports.default = makeDir;
 
 module.exports.sync = (input, options) => {
 	checkPath(input);
-	options = Object.assign({}, defaults, options);
+	options = {
+		...defaults,
+		...options
+	};
 
 	if (useNativeRecursiveOption && options.fs.mkdirSync === fs.mkdirSync) {
 		const pth = path.resolve(input);
