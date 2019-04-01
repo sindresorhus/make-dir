@@ -1,5 +1,6 @@
-import {expectType} from 'tsd-check';
-import makeDir, {sync as makeDirSync} from '.';
+import {expectType} from 'tsd';
+import makeDir = require('.');
+import {sync as makeDirSync} from '.';
 import * as fs from 'fs';
 import * as gfs from 'graceful-fs';
 
