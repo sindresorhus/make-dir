@@ -54,9 +54,10 @@ test('file exits', t => {
 test('parent dir is file', t => {
 	const fp = tempy.file();
 	fs.writeFileSync(fp, '');
-	t.throws(() => {
+	const error = t.throws(() => {
 		makeDir.sync(fp + '/sub/dir');
-	}, {code: 'ENOTDIR'});
+	});
+	t.regex(error.code, /ENOTDIR|EEXIST/);
 });
 
 test('root dir', t => {

@@ -52,7 +52,8 @@ test('file exits', async t => {
 test('parent dir is file', async t => {
 	const fp = tempy.file();
 	fs.writeFileSync(fp, '');
-	await t.throwsAsync(makeDir(fp + '/sub/dir'), {code: 'ENOTDIR'});
+	const error = await t.throwsAsync(makeDir(fp + '/sub/dir'));
+	t.regex(error.code, /ENOTDIR|EEXIST/);
 });
 
 test('root dir', async t => {
