@@ -49,6 +49,12 @@ test('file exits', async t => {
 	await t.throwsAsync(makeDir(fp), {code: 'EEXIST'});
 });
 
+test('parent dir is file', async t => {
+	const fp = tempy.file();
+	fs.writeFileSync(fp, '');
+	await t.throwsAsync(makeDir(fp + '/sub/dir'), {code: 'ENOTDIR'});
+});
+
 test('root dir', async t => {
 	if (process.platform === 'win32') {
 		// Do not assume that `C:` is current drive
