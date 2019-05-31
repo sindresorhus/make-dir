@@ -73,11 +73,11 @@ const makeDir = require('make-dir');
 
 ## API
 
-### makeDir(path, [options])
+### makeDir(path, options?)
 
 Returns a `Promise` for the path to the created directory.
 
-### makeDir.sync(path, [options])
+### makeDir.sync(path, options?)
 
 Returns the path to the created directory.
 
@@ -89,7 +89,7 @@ Directory to create.
 
 #### options
 
-Type: `Object`
+Type: `object`
 
 ##### mode
 
@@ -100,7 +100,7 @@ Directory [permissions](https://x-team.com/blog/file-system-permissions-umask-no
 
 ##### fs
 
-Type: `Object`<br>
+Type: `object`<br>
 Default: `require('fs')`
 
 Use a custom `fs` implementation. For example [`graceful-fs`](https://github.com/isaacs/node-graceful-fs).
@@ -118,6 +118,14 @@ Using a custom `fs` implementation will block the use of the native `recursive` 
 - [move-file](https://github.com/sindresorhus/move-file) - Move a file
 
 
-## License
+---
 
-MIT © [Sindre Sorhus](https://sindresorhus.com)
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-make-dir?utm_source=npm-make-dir&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
