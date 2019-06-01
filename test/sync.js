@@ -51,6 +51,15 @@ test('file exits', t => {
 	}, {code: 'EEXIST'});
 });
 
+test('parent dir is file', t => {
+	const fp = tempy.file();
+	fs.writeFileSync(fp, '');
+	const error = t.throws(() => {
+		makeDir.sync(fp + '/sub/dir');
+	});
+	t.regex(error.code, /ENOTDIR|EEXIST/);
+});
+
 test('root dir', t => {
 	if (process.platform === 'win32') {
 		// Do not assume that `C:` is current drive
