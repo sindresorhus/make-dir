@@ -86,8 +86,12 @@ const makeDir = async (input, options) => {
 				return make(pth);
 			}
 
-			const stats = await stat(pth);
-			if (!stats.isDirectory()) {
+			try {
+				const stats = await stat(pth);
+				if (!stats.isDirectory()) {
+					throw new Error('The path is not a directory');
+				}
+			} catch (_) {
 				throw error;
 			}
 
