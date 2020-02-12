@@ -26,6 +26,7 @@ const processOptions = options => {
 		mode: 0o777 & (~process.umask()),
 		fs
 	};
+
 	return {
 		...defaults,
 		...options
