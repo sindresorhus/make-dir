@@ -2,7 +2,6 @@
 
 > Make a directory and its parents if needed - Think `mkdir -p`
 
-
 ## Advantages over [`mkdirp`](https://github.com/substack/node-mkdirp)
 
 - Promise API *(Async/await ready!)*
@@ -13,13 +12,11 @@
 - Doesn't bundle a CLI
 - Uses native the `fs.mkdir/mkdirSync` [`recursive` option](https://nodejs.org/dist/latest/docs/api/fs.html#fs_fs_mkdir_path_options_callback) in Node.js >=10.12.0 unless [overridden](#fs)
 
-
 ## Install
 
 ```
 $ npm install make-dir
 ```
-
 
 ## Usage
 
@@ -70,7 +67,6 @@ const makeDir = require('make-dir');
 })();
 ```
 
-
 ## API
 
 ### makeDir(path, options?)
@@ -93,20 +89,19 @@ Type: `object`
 
 ##### mode
 
-Type: `integer`<br>
+Type: `integer`\
 Default: `0o777 & (~process.umask())`
 
 Directory [permissions](https://x-team.com/blog/file-system-permissions-umask-node-js/).
 
 ##### fs
 
-Type: `object`<br>
+Type: `object`\
 Default: `require('fs')`
 
 Use a custom `fs` implementation. For example [`graceful-fs`](https://github.com/isaacs/node-graceful-fs).
 
 Using a custom `fs` implementation will block the use of the native `recursive` option if `fs.mkdir` or `fs.mkdirSync` is not the native function.
-
 
 ## Related
 
@@ -116,7 +111,6 @@ Using a custom `fs` implementation will block the use of the native `recursive` 
 - [cpy](https://github.com/sindresorhus/cpy) - Copy files
 - [cpy-cli](https://github.com/sindresorhus/cpy-cli) - Copy files on the command-line
 - [move-file](https://github.com/sindresorhus/move-file) - Move a file
-
 
 ---
 

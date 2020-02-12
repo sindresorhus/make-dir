@@ -4,6 +4,7 @@
 	"description": "Make a directory and its parents if needed - Think `mkdir -p`",
 	"license": "MIT",
 	"repository": "sindresorhus/make-dir",
+	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
@@ -45,14 +46,14 @@
 	},
 	"devDependencies": {
 		"@types/graceful-fs": "^4.1.3",
-		"@types/node": "^11.12.2",
+		"@types/node": "^13.7.1",
 		"ava": "^1.4.0",
 		"codecov": "^3.2.0",
 		"graceful-fs": "^4.1.15",
 		"nyc": "^13.3.0",
 		"path-type": "^4.0.0",
 		"tempy": "^0.2.1",
-		"tsd": "^0.7.1",
-		"xo": "^0.24.0"
+		"tsd": "^0.11.0",
+		"xo": "^0.25.4"
 	}
 }
