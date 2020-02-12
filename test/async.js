@@ -120,14 +120,15 @@ test.serial('handles invalid path characters', async t => {
 
 if (process.platform === 'win32') {
 	test('handles non-existent root', async t => {
-		const expectedError = semver.satisfies(process.version, '>=12.0.0') ? {
+		const expectedError = semver.satisfies(process.version, '>=12') ? {
 			code: 'ENOENT',
 			message: /no such file or directory, mkdir/
 		} : {
 			code: 'EPERM',
 			message: /operation not permitted, mkdir/
 		};
-		// We assume the `o:\` drive doesn't exist on Windows
+
+		// We assume the `o:\` drive doesn't exist on Windows.
 		await t.throwsAsync(makeDir('o:\\foo'), expectedError);
 	});
 }
