@@ -5,7 +5,19 @@ import pathType from 'path-type';
 
 export const getFixture = () => path.join(tempy.directory(), 'a/b/c/unicorn_unicorn_unicorn/d/e/f/g/h');
 
-export const assertDirectory = (t, directory, mode = 0o777 & (~process.umask())) => {
+let lastMask = 0;
+
+function umask() {
+	// Avoid deprecation warning in v14+
+	lastMask = process.umask(lastMask);
+	process.umask(lastMask);
+	return lastMask;
+}
+
+// Get the initial value before any async operations start
+umask();
+
+export const assertDirectory = (t, directory, mode = 0o777 & (~umask())) => {
 	// Setting `mode` on `fs.mkdir` on Windows doesn't seem to work
 	if (process.platform === 'win32') {
 		mode = 0o666;
