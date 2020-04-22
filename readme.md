@@ -90,7 +90,7 @@ Type: `object`
 ##### mode
 
 Type: `integer`\
-Default: `0o777 & (~process.umask())`
+Default: `0o777`
 
 Directory [permissions](https://x-team.com/blog/file-system-permissions-umask-node-js/).
 
