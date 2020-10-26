@@ -1,4 +1,4 @@
-# make-dir [![Build Status](https://travis-ci.org/sindresorhus/make-dir.svg?branch=master)](https://travis-ci.org/sindresorhus/make-dir) [![codecov](https://codecov.io/gh/sindresorhus/make-dir/branch/master/graph/badge.svg)](https://codecov.io/gh/sindresorhus/make-dir)
+# make-dir [![Build Status](https://travis-ci.com/sindresorhus/make-dir.svg?branch=master)](https://travis-ci.com/github/sindresorhus/make-dir) [![codecov](https://codecov.io/gh/sindresorhus/make-dir/branch/master/graph/badge.svg)](https://codecov.io/gh/sindresorhus/make-dir)
 
 > Make a directory and its parents if needed - Think `mkdir -p`
 
