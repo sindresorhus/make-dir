@@ -2,9 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const {promisify} = require('util');
-const semver = require('semver');
+const semverGte = require('semver/functions/gte');
 
-const useNativeRecursiveOption = semver.satisfies(process.version, '>=10.12.0');
+const useNativeRecursiveOption = semverGte(process.version, '10.12.0');
 
 // https://github.com/nodejs/node/issues/8987
 // https://github.com/libuv/libuv/pull/1088
