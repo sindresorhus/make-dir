@@ -11,7 +11,7 @@
 		"url": "https://sindresorhus.com"
 	},
 	"engines": {
-		"node": ">=8"
+		"node": ">=10"
 	},
 	"scripts": {
 		"test": "xo && nyc ava && tsd"
@@ -42,18 +42,18 @@
 		"file-system"
 	],
 	"dependencies": {
-		"semver": "^6.0.0"
+		"semver": "^7.3.2"
 	},
 	"devDependencies": {
 		"@types/graceful-fs": "^4.1.3",
-		"@types/node": "^13.7.1",
-		"ava": "^1.4.0",
+		"@types/node": "^14.14.6",
+		"ava": "^2.4.0",
 		"codecov": "^3.2.0",
 		"graceful-fs": "^4.1.15",
 		"nyc": "^15.0.0",
 		"path-type": "^4.0.0",
-		"tempy": "^0.2.1",
-		"tsd": "^0.11.0",
-		"xo": "^0.25.4"
+		"tempy": "^1.0.0",
+		"tsd": "^0.13.1",
+		"xo": "^0.34.2"
 	}
 }
