@@ -4,59 +4,59 @@ import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
 import semver from 'semver';
-import {getFixture, assertDirectory, customFsOptions} from './helpers/util';
-import makeDir from '..';
+import {getFixture, assertDirectory, customFsOptions} from './_util';
+import makeDirectory from '..';
 
 test('main', t => {
-	const dir = getFixture();
-	const madeDir = makeDir.sync(dir);
-	t.true(madeDir.length > 0);
-	assertDirectory(t, madeDir);
+	const directory = getFixture();
+	const madeDirectory = makeDirectory.sync(directory);
+	t.true(madeDirectory.length > 0);
+	assertDirectory(t, madeDirectory);
 });
 
 test('`fs` option - graceful-fs', t => {
-	const dir = getFixture();
-	makeDir.sync(dir, {fs: gracefulFs});
-	assertDirectory(t, dir);
+	const directory = getFixture();
+	makeDirectory.sync(directory, {fs: gracefulFs});
+	assertDirectory(t, directory);
 });
 
 test('`fs` option - custom', t => {
-	const dir = getFixture();
-	const madeDir = makeDir.sync(dir, customFsOptions);
-	t.true(madeDir.length > 0);
-	assertDirectory(t, madeDir);
+	const directory = getFixture();
+	const madeDirectory = makeDirectory.sync(directory, customFsOptions);
+	t.true(madeDirectory.length > 0);
+	assertDirectory(t, madeDirectory);
 });
 
 test('`mode` option', t => {
-	const dir = getFixture();
+	const directory = getFixture();
 	const mode = 0o744;
-	makeDir.sync(dir, {mode});
-	assertDirectory(t, dir, mode);
+	makeDirectory.sync(directory, {mode});
+	assertDirectory(t, directory, mode);
 
 	// Ensure it's writable
-	makeDir.sync(dir);
-	assertDirectory(t, dir, mode);
+	makeDirectory.sync(directory);
+	assertDirectory(t, directory, mode);
 });
 
 test('dir exists', t => {
-	const dir = makeDir.sync(tempy.directory());
-	t.true(dir.length > 0);
-	assertDirectory(t, dir);
+	const directory = makeDirectory.sync(tempy.directory());
+	t.true(directory.length > 0);
+	assertDirectory(t, directory);
 });
 
 test('file exits', t => {
-	const fp = tempy.file();
-	fs.writeFileSync(fp, '');
+	const filePath = tempy.file();
+	fs.writeFileSync(filePath, '');
 	t.throws(() => {
-		makeDir.sync(fp);
+		makeDirectory.sync(filePath);
 	}, {code: 'EEXIST'});
 });
 
 test('parent dir is file', t => {
-	const fp = tempy.file();
-	fs.writeFileSync(fp, '');
+	const filePath = tempy.file();
+	fs.writeFileSync(filePath, '');
 	const error = t.throws(() => {
-		makeDir.sync(fp + '/sub/dir');
+		makeDirectory.sync(filePath + '/sub/dir');
 	});
 	t.regex(error.code, /ENOTDIR|EEXIST/);
 });
@@ -65,41 +65,41 @@ test('root dir', t => {
 	if (process.platform === 'win32') {
 		// Do not assume that `C:` is current drive
 		t.throws(() => {
-			makeDir.sync('/');
+			makeDirectory.sync('/');
 		}, {
 			code: 'EPERM',
 			message: /operation not permitted, mkdir '[A-Za-z]:\\'/
 		});
 	} else {
 		const mode = fs.statSync('/').mode & 0o777;
-		const dir = makeDir.sync('/');
-		t.true(dir.length > 0);
-		assertDirectory(t, dir, mode);
+		const directory = makeDirectory.sync('/');
+		t.true(directory.length > 0);
+		assertDirectory(t, directory, mode);
 	}
 });
 
 test('race two', t => {
-	const dir = getFixture();
-	makeDir.sync(dir);
-	makeDir.sync(dir);
-	assertDirectory(t, dir);
+	const directory = getFixture();
+	makeDirectory.sync(directory);
+	makeDirectory.sync(directory);
+	assertDirectory(t, directory);
 });
 
 test('race many', t => {
-	const dir = getFixture();
+	const directory = getFixture();
 
 	for (let i = 0; i < 100; i++) {
-		makeDir.sync(dir);
+		makeDirectory.sync(directory);
 	}
 
-	assertDirectory(t, dir);
+	assertDirectory(t, directory);
 });
 
 test('handles null bytes in path', t => {
-	const dir = path.join(tempy.directory(), 'foo\u0000bar');
+	const directory = path.join(tempy.directory(), 'foo\u0000bar');
 
 	const error = t.throws(() => {
-		makeDir.sync(dir);
+		makeDirectory.sync(directory);
 	}, /null bytes/);
 	t.regex(error.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
 });
@@ -116,7 +116,7 @@ if (process.platform === 'win32') {
 
 		// We assume the `o:\` drive doesn't exist on Windows.
 		t.throws(() => {
-			makeDir.sync('o:\\foo');
+			makeDirectory.sync('o:\\foo');
 		}, expectedError);
 	});
 }
