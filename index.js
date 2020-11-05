@@ -90,7 +90,7 @@ const makeDir = async (input, options) => {
 				if (!stats.isDirectory()) {
 					throw new Error('The path is not a directory');
 				}
-			} catch (_) {
+			} catch {
 				throw error;
 			}
 
@@ -143,7 +143,7 @@ module.exports.sync = (input, options) => {
 				if (!options.fs.statSync(pth).isDirectory()) {
 					throw new Error('The path is not a directory');
 				}
-			} catch (_) {
+			} catch {
 				throw error;
 			}
 		}
