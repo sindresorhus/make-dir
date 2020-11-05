@@ -42,7 +42,7 @@
 		"file-system"
 	],
 	"dependencies": {
-		"semver": "^6.0.0"
+		"semver": "^7.3.2"
 	},
 	"devDependencies": {
 		"@types/graceful-fs": "^4.1.3",
