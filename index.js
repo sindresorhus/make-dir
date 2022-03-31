@@ -44,12 +44,7 @@ const permissionError = pth => {
 };
 
 const getTargetDir = (input) => {
-	let targetDirInfo = input;
-	if (typeof input === 'string') {
-		targetDirInfo = path.resolve(input);
-	}
-
-	return targetDirInfo;
+	return typeof input === 'string' ? path.resolve(input) : input;
 };
 
 const makeDir = async (input, options) => {
