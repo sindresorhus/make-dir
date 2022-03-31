@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import url from 'url';
 import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
@@ -116,6 +117,14 @@ test.serial('handles invalid path characters', async t => {
 	Object.defineProperty(process, 'platform', {
 		value: platform
 	});
+});
+
+test('url argument', async t => {
+	const directory = getFixture();
+	const urlObject = url.pathToFileURL(directory);
+
+	await t.notThrowsAsync(makeDirectory(urlObject));
+	assertDirectory(t, directory);
 });
 
 if (process.platform === 'win32') {

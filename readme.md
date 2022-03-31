@@ -79,7 +79,7 @@ Returns the path to the created directory.
 
 #### path
 
-Type: `string`
+Type: `string | URL`
 
 Directory to create.
 

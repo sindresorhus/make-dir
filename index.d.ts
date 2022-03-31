@@ -52,7 +52,7 @@ declare const makeDir: {
 	})();
 	```
 	*/
-	(path: string, options?: makeDir.Options): Promise<string>;
+	(path: string | URL, options?: makeDir.Options): Promise<string>;
 
 	/**
 	Synchronously make a directory and its parents if needed - Think `mkdir -p`.
@@ -60,7 +60,7 @@ declare const makeDir: {
 	@param path - Directory to create.
 	@returns The path to the created directory.
 	*/
-	sync(path: string, options?: makeDir.Options): string;
+	sync(path: string | URL, options?: makeDir.Options): string;
 };
 
 export = makeDir;

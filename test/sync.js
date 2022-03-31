@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import url from 'url';
 import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
@@ -120,3 +121,13 @@ if (process.platform === 'win32') {
 		}, expectedError);
 	});
 }
+
+test('url argument', t => {
+	const directory = getFixture();
+	const urlObject = url.pathToFileURL(directory);
+
+	t.notThrows(() => {
+		makeDirectory.sync(urlObject);
+	});
+	assertDirectory(t, directory);
+});

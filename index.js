@@ -43,6 +43,15 @@ const permissionError = pth => {
 	return error;
 };
 
+const getTargetDir = (input) => {
+	let targetDirInfo = input;
+	if (typeof input === 'string') {
+		targetDirInfo = path.resolve(input);
+	}
+
+	return targetDirInfo;
+};
+
 const makeDir = async (input, options) => {
 	checkPath(input);
 	options = processOptions(options);
@@ -51,7 +60,7 @@ const makeDir = async (input, options) => {
 	const stat = promisify(options.fs.stat);
 
 	if (useNativeRecursiveOption && options.fs.mkdir === fs.mkdir) {
-		const pth = path.resolve(input);
+		const pth = getTargetDir(input);
 
 		await mkdir(pth, {
 			mode: options.mode,
@@ -108,7 +117,7 @@ module.exports.sync = (input, options) => {
 	options = processOptions(options);
 
 	if (useNativeRecursiveOption && options.fs.mkdirSync === fs.mkdirSync) {
-		const pth = path.resolve(input);
+		const pth = getTargetDir(input);
 
 		fs.mkdirSync(pth, {
 			mode: options.mode,
