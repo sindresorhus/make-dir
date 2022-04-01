@@ -10,7 +10,10 @@ const useNativeRecursiveOption = semverGte(process.version, '10.12.0');
 // https://github.com/libuv/libuv/pull/1088
 const checkPath = pth => {
 	if (process.platform === 'win32') {
-		if (typeof pth !== 'string') return;
+		if (typeof pth !== 'string') {
+			return;
+		}
+
 		const pathHasInvalidWinCharacters = /[<>:"|?*]/.test(pth.replace(path.parse(pth).root, ''));
 
 		if (pathHasInvalidWinCharacters) {
@@ -44,10 +47,6 @@ const permissionError = pth => {
 	return error;
 };
 
-const getTargetDir = input => {
-	return typeof input === 'string' ? path.resolve(input) : input;
-};
-
 const makeDir = async (input, options) => {
 	checkPath(input);
 	options = processOptions(options);
@@ -56,14 +55,12 @@ const makeDir = async (input, options) => {
 	const stat = promisify(options.fs.stat);
 
 	if (useNativeRecursiveOption && options.fs.mkdir === fs.mkdir) {
-		const pth = getTargetDir(input);
-
-		await mkdir(pth, {
+		await mkdir(input, {
 			mode: options.mode,
 			recursive: true
 		});
 
-		return pth;
+		return input;
 	}
 
 	const make = async pth => {
@@ -113,14 +110,12 @@ module.exports.sync = (input, options) => {
 	options = processOptions(options);
 
 	if (useNativeRecursiveOption && options.fs.mkdirSync === fs.mkdirSync) {
-		const pth = getTargetDir(input);
-
-		fs.mkdirSync(pth, {
+		fs.mkdirSync(input, {
 			mode: options.mode,
 			recursive: true
 		});
 
-		return pth;
+		return input;
 	}
 
 	const make = pth => {
