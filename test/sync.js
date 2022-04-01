@@ -131,3 +131,13 @@ test('url argument', t => {
 	});
 	assertDirectory(t, directory);
 });
+
+test('relative url argument', t => {
+	const directory = getFixture();
+	const {base, dir} = path.parse(directory);
+
+	t.notThrows(() => {
+		makeDirectory.sync(new URL(base, `file://${dir}/`));
+	});
+	assertDirectory(t, directory);
+});

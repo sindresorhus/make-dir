@@ -127,6 +127,14 @@ test('url argument', async t => {
 	assertDirectory(t, directory);
 });
 
+test('relative url argument', async t => {
+	const directory = getFixture();
+	const {base, dir} = path.parse(directory);
+
+	await t.notThrowsAsync(makeDirectory(new URL(base, `file://${dir}/`)));
+	assertDirectory(t, directory);
+});
+
 if (process.platform === 'win32') {
 	test('handles non-existent root', async t => {
 		const expectedError = semver.satisfies(process.version, '>=12') ? {
