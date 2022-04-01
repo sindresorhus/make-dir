@@ -43,7 +43,7 @@ const permissionError = pth => {
 	return error;
 };
 
-const getTargetDir = (input) => {
+const getTargetDir = input => {
 	return typeof input === 'string' ? path.resolve(input) : input;
 };
 
