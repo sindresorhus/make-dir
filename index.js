@@ -10,6 +10,7 @@ const useNativeRecursiveOption = semverGte(process.version, '10.12.0');
 // https://github.com/libuv/libuv/pull/1088
 const checkPath = pth => {
 	if (process.platform === 'win32') {
+		if (typeof pth !== 'string') return;
 		const pathHasInvalidWinCharacters = /[<>:"|?*]/.test(pth.replace(path.parse(pth).root, ''));
 
 		if (pathHasInvalidWinCharacters) {
