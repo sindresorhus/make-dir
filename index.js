@@ -36,6 +36,10 @@ const processOptions = options => {
 	};
 };
 
+const getTargetDir = input => {
+	return path.resolve(typeof input === 'string' ? input : input.pathname);
+};
+
 const permissionError = pth => {
 	// This replicates the exception of `fs.mkdir` with native the
 	// `recusive` option when run on an invalid drive under Windows.
@@ -100,7 +104,7 @@ const makeDir = async (input, options) => {
 		}
 	};
 
-	return make(path.resolve(input));
+	return make(getTargetDir(input));
 };
 
 module.exports = makeDir;
@@ -151,5 +155,5 @@ module.exports.sync = (input, options) => {
 		return pth;
 	};
 
-	return make(path.resolve(input));
+	return make(getTargetDir(input));
 };
