@@ -104,7 +104,7 @@ const makeDir = async (input, options) => {
 		}
 	};
 
-	return make(getTargetDir(input));
+	return make(getTargetDirectory(input));
 };
 
 module.exports = makeDir;
@@ -155,5 +155,5 @@ module.exports.sync = (input, options) => {
 		return pth;
 	};
 
-	return make(getTargetDir(input));
+	return make(getTargetDirectory(input));
 };
