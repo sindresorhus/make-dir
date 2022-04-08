@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const {promisify} = require('util');
+const {fileURLToPath} = require('url');
 const semverGte = require('semver/functions/gte');
 
 const useNativeRecursiveOption = semverGte(process.version, '10.12.0');
@@ -36,8 +37,8 @@ const processOptions = options => {
 	};
 };
 
-const getTargetDir = input => {
-	return path.resolve(typeof input === 'string' ? input : input.pathname);
+const getTargetDirectory = input => {
+	return path.resolve(typeof input === 'string' ? input : fileURLToPath(input));
 };
 
 const permissionError = pth => {
