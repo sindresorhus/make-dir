@@ -37,8 +37,10 @@ const processOptions = options => {
 	};
 };
 
+const toPath = urlOrPath => urlOrPath instanceof URL ? fileURLToPath(urlOrPath) : urlOrPath;
+
 const getTargetDirectory = input => {
-	return path.resolve(typeof input === 'string' ? input : fileURLToPath(input));
+	return path.resolve(toPath(input));
 };
 
 const permissionError = pth => {
