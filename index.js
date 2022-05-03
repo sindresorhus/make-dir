@@ -39,9 +39,7 @@ const processOptions = options => {
 
 const toPath = urlOrPath => urlOrPath instanceof URL ? fileURLToPath(urlOrPath) : urlOrPath;
 
-const getTargetDirectory = input => {
-	return path.resolve(toPath(input));
-};
+const getTargetDirectory = input => path.resolve(toPath(input));
 
 const permissionError = pth => {
 	// This replicates the exception of `fs.mkdir` with native the
