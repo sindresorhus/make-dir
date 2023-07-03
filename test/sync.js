@@ -3,7 +3,6 @@ import path from 'path';
 import test from 'ava';
 import tempy from 'tempy';
 import gracefulFs from 'graceful-fs';
-import semver from 'semver';
 import {getFixture, assertDirectory, customFsOptions} from './_util';
 import makeDirectory from '..';
 
@@ -106,12 +105,9 @@ test('handles null bytes in path', t => {
 
 if (process.platform === 'win32') {
 	test('handles non-existent root', t => {
-		const expectedError = semver.satisfies(process.version, '>=12') ? {
+		const expectedError = {
 			code: 'ENOENT',
 			message: /no such file or directory, mkdir/
-		} : {
-			code: 'EPERM',
-			message: /operation not permitted, mkdir/
 		};
 
 		// We assume the `o:\` drive doesn't exist on Windows.
