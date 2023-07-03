@@ -105,7 +105,7 @@ test('handles null bytes in path', t => {
 });
 
 if (process.platform === 'win32') {
-	test('handles non-existent root', t => {
+	test('handles non-existent root - ' + process.version, t => {
 		const expectedError = semver.satisfies(process.version, '>=12') ? {
 			code: 'ENOENT',
 			message: /no such file or directory, mkdir/
