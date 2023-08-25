@@ -2,11 +2,12 @@
 
 > Make a directory and its parents if needed - Think `mkdir -p`
 
-## Advantages over [`mkdirp`](https://github.com/substack/node-mkdirp)
+**You probably want the built-in [`fsPromises.mkdir('…', {recursive: true})`](https://nodejs.org/api/fs.html#fspromisesmkdirpath-options) instead.**
+
+### Advantages over [`mkdirp`](https://github.com/substack/node-mkdirp)
 
 - Promise API *(Async/await ready!)*
 - Fixes many `mkdirp` issues: [#96](https://github.com/substack/node-mkdirp/pull/96) [#70](https://github.com/substack/node-mkdirp/issues/70) [#66](https://github.com/substack/node-mkdirp/issues/66)
-- 100% test coverage
 - CI-tested on macOS, Linux, and Windows
 - Actively maintained
 - Doesn't bundle a CLI
@@ -14,8 +15,8 @@
 
 ## Install
 
-```
-$ npm install make-dir
+```sh
+npm install make-dir
 ```
 
 ## Usage
@@ -28,14 +29,12 @@ $ tree
 ```
 
 ```js
-const makeDir = require('make-dir');
+import makeDirectory from 'make-dir';
 
-(async () => {
-	const path = await makeDir('unicorn/rainbow/cake');
+const path = await makeDirectory('unicorn/rainbow/cake');
 
-	console.log(path);
-	//=> '/Users/sindresorhus/fun/unicorn/rainbow/cake'
-})();
+console.log(path);
+//=> '/Users/sindresorhus/fun/unicorn/rainbow/cake'
 ```
 
 ```
@@ -49,31 +48,29 @@ $ tree
 Multiple directories:
 
 ```js
-const makeDir = require('make-dir');
+import makeDirectory from 'make-dir';
 
-(async () => {
-	const paths = await Promise.all([
-		makeDir('unicorn/rainbow'),
-		makeDir('foo/bar')
-	]);
+const paths = await Promise.all([
+	makeDirectory('unicorn/rainbow'),
+	makeDirectory('foo/bar')
+]);
 
-	console.log(paths);
-	/*
-	[
-		'/Users/sindresorhus/fun/unicorn/rainbow',
-		'/Users/sindresorhus/fun/foo/bar'
-	]
-	*/
-})();
+console.log(paths);
+/*
+[
+	'/Users/sindresorhus/fun/unicorn/rainbow',
+	'/Users/sindresorhus/fun/foo/bar'
+]
+*/
 ```
 
 ## API
 
-### makeDir(path, options?)
+### makeDirectory(path, options?)
 
 Returns a `Promise` for the path to the created directory.
 
-### makeDir.sync(path, options?)
+### makeDirectory.sync(path, options?)
 
 Returns the path to the created directory.
 
@@ -97,7 +94,7 @@ Directory [permissions](https://x-team.com/blog/file-system-permissions-umask-no
 ##### fs
 
 Type: `object`\
-Default: `require('fs')`
+Default: `import fs from 'node:fs'`
 
 Use a custom `fs` implementation. For example [`graceful-fs`](https://github.com/isaacs/node-graceful-fs).
 
@@ -111,15 +108,3 @@ Using a custom `fs` implementation will block the use of the native `recursive` 
 - [cpy](https://github.com/sindresorhus/cpy) - Copy files
 - [cpy-cli](https://github.com/sindresorhus/cpy-cli) - Copy files on the command-line
 - [move-file](https://github.com/sindresorhus/move-file) - Move a file
-
----
-
-<div align="center">
-	<b>
-		<a href="https://tidelift.com/subscription/pkg/npm-make-dir?utm_source=npm-make-dir&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
-	</b>
-	<br>
-	<sub>
-		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
-	</sub>
-</div>
