@@ -1,8 +1,13 @@
-# make-dir [![codecov](https://codecov.io/gh/sindresorhus/make-dir/branch/main/graph/badge.svg)](https://codecov.io/gh/sindresorhus/make-dir)
+# make-dir
 
 > Make a directory and its parents if needed - Think `mkdir -p`
 
-**You probably want the built-in [`fsPromises.mkdir('…', {recursive: true})`](https://nodejs.org/api/fs.html#fspromisesmkdirpath-options) instead.**
+> [!TIP]
+> You probably want the built-in [`fsPromises.mkdir('…', {recursive: true})`](https://nodejs.org/api/fs.html#fspromisesmkdirpath-options) instead.
+
+### Advantages over `fsPromises.mkdir('…', {recursive: true})`
+
+- Supports a custom `fs` implementation.
 
 ### Advantages over [`mkdirp`](https://github.com/substack/node-mkdirp)
 
@@ -11,7 +16,7 @@
 - CI-tested on macOS, Linux, and Windows
 - Actively maintained
 - Doesn't bundle a CLI
-- Uses the native `fs.mkdir/mkdirSync` [`recursive` option](https://nodejs.org/dist/latest/docs/api/fs.html#fs_fs_mkdir_path_options_callback) in Node.js >=10.12.0 unless [overridden](#fs)
+- Uses the native `fs.mkdir/mkdirSync` [`recursive` option](https://nodejs.org/dist/latest/docs/api/fs.html#fs_fs_mkdir_path_options_callback) in Node.js unless [overridden](#fs)
 
 ## Install
 
@@ -21,7 +26,7 @@ npm install make-dir
 
 ## Usage
 
-```
+```console
 $ pwd
 /Users/sindresorhus/fun
 $ tree
@@ -29,7 +34,7 @@ $ tree
 ```
 
 ```js
-import makeDirectory from 'make-dir';
+import {makeDirectory} from 'make-dir';
 
 const path = await makeDirectory('unicorn/rainbow/cake');
 
@@ -37,7 +42,7 @@ console.log(path);
 //=> '/Users/sindresorhus/fun/unicorn/rainbow/cake'
 ```
 
-```
+```console
 $ tree
 .
 └── unicorn
@@ -48,7 +53,7 @@ $ tree
 Multiple directories:
 
 ```js
-import makeDirectory from 'make-dir';
+import {makeDirectory} from 'make-dir';
 
 const paths = await Promise.all([
 	makeDirectory('unicorn/rainbow'),
@@ -70,7 +75,7 @@ console.log(paths);
 
 Returns a `Promise` for the path to the created directory.
 
-### makeDirectory.sync(path, options?)
+### makeDirectorySync(path, options?)
 
 Returns the path to the created directory.
 
@@ -78,7 +83,7 @@ Returns the path to the created directory.
 
 Type: `string`
 
-Directory to create.
+The directory to create.
 
 #### options
 
@@ -89,7 +94,7 @@ Type: `object`
 Type: `integer`\
 Default: `0o777`
 
-Directory [permissions](https://x-team.com/blog/file-system-permissions-umask-node-js/).
+The directory [permissions](https://x-team.com/blog/file-system-permissions-umask-node-js/).
 
 ##### fs
 

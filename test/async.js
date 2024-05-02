@@ -1,10 +1,11 @@
-import fs from 'fs';
-import path from 'path';
+import process from 'node:process';
+import fs from 'node:fs';
+import path from 'node:path';
 import test from 'ava';
-import tempy from 'tempy';
+import {temporaryDirectory, temporaryFile} from 'tempy';
 import gracefulFs from 'graceful-fs';
-import {getFixture, assertDirectory, customFsOptions} from './_util';
-import makeDirectory from '..';
+import {makeDirectory} from '../index.js';
+import {getFixture, assertDirectory, customFsOptions} from './_util.js';
 
 test('main', async t => {
 	const directory = getFixture();
@@ -37,34 +38,34 @@ test('`mode` option', async t => {
 	assertDirectory(t, directory, mode);
 });
 
-test('dir exists', async t => {
-	const directory = await makeDirectory(tempy.directory());
+test('directory exists', async t => {
+	const directory = await makeDirectory(temporaryDirectory());
 	t.true(directory.length > 0);
 	assertDirectory(t, directory);
 });
 
-test('file exits', async t => {
-	const filePath = tempy.file();
+test('file exists', async t => {
+	const filePath = temporaryFile();
 	fs.writeFileSync(filePath, '');
 	await t.throwsAsync(makeDirectory(filePath), {code: 'EEXIST'});
 });
 
-test('parent dir is file', async t => {
-	const filePath = tempy.file();
+test('parent directory is file', async t => {
+	const filePath = temporaryFile();
 	fs.writeFileSync(filePath, '');
 	const error = await t.throwsAsync(makeDirectory(filePath + '/sub/dir'));
 	t.regex(error.code, /ENOTDIR|EEXIST/);
 });
 
-test('root dir', async t => {
+test('root directory', async t => {
 	if (process.platform === 'win32') {
 		// Do not assume that `C:` is current drive
 		await t.throwsAsync(makeDirectory('/'), {
 			code: 'EPERM',
-			message: /operation not permitted, mkdir '[A-Za-z]:\\'/
+			message: /operation not permitted, mkdir '[A-Za-z]:\\'/,
 		});
 	} else {
-		const mode = fs.statSync('/').mode & 0o777;
+		const mode = fs.statSync('/').mode & 0o777; // eslint-disable-line no-bitwise
 		const directory = await makeDirectory('/');
 		t.true(directory.length > 0);
 		assertDirectory(t, directory, mode);
@@ -90,8 +91,8 @@ test('race many', async t => {
 });
 
 test('handles null bytes in path', async t => {
-	const directory = path.join(tempy.directory(), 'foo\u0000bar');
-	const error = await t.throwsAsync(makeDirectory(directory), /null bytes/);
+	const directory = path.join(temporaryDirectory(), 'foo\u0000bar');
+	const error = await t.throwsAsync(makeDirectory(directory), {message: /null bytes/});
 	t.regex(error.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
 });
 
@@ -99,21 +100,21 @@ test.serial('handles invalid path characters', async t => {
 	// We do this to please `nyc`
 	const {platform} = process;
 	Object.defineProperty(process, 'platform', {
-		value: 'win32'
+		value: 'win32',
 	});
 
 	// Also to please `nyc`
-	await makeDirectory(tempy.directory());
+	await makeDirectory(temporaryDirectory());
 
-	const directory = path.join(tempy.directory(), 'foo"bar');
+	const directory = path.join(temporaryDirectory(), 'foo"bar');
 
 	await t.throwsAsync(makeDirectory(directory), {
 		code: 'EINVAL',
-		message: /invalid characters/
+		message: /invalid characters/,
 	});
 
 	Object.defineProperty(process, 'platform', {
-		value: platform
+		value: platform,
 	});
 });
 
@@ -121,7 +122,7 @@ if (process.platform === 'win32') {
 	test('handles non-existent root', async t => {
 		const expectedError = {
 			code: 'ENOENT',
-			message: /no such file or directory, mkdir/
+			message: /no such file or directory, mkdir/,
 		};
 
 		// We assume the `o:\` drive doesn't exist on Windows.

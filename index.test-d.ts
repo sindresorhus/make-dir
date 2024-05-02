@@ -1,23 +1,22 @@
+import * as fs from 'node:fs';
 import {expectType} from 'tsd';
-import makeDir = require('.');
-import {sync as makeDirSync} from '.';
-import * as fs from 'fs';
 import * as gfs from 'graceful-fs';
+import {makeDirectory, makeDirectorySync} from './index.js';
 
 // MakeDir
-expectType<Promise<string>>(makeDir('path/to/somewhere'));
+expectType<Promise<string>>(makeDirectory('path/to/somewhere'));
 
 expectType<Promise<string>>(
-	makeDir('path/to/somewhere', {mode: 0o777})
+	makeDirectory('path/to/somewhere', {mode: 0o777}),
 );
-expectType<Promise<string>>(makeDir('path/to/somewhere', {fs}));
-expectType<Promise<string>>(makeDir('path/to/somewhere', {fs: gfs}));
+expectType<Promise<string>>(makeDirectory('path/to/somewhere', {fs}));
+expectType<Promise<string>>(makeDirectory('path/to/somewhere', {fs: gfs}));
 
 // MakeDir (sync)
-expectType<string>(makeDirSync('path/to/somewhere'));
+expectType<string>(makeDirectorySync('path/to/somewhere'));
 
 expectType<string>(
-	makeDirSync('path/to/somewhere', {mode: 0o777})
+	makeDirectorySync('path/to/somewhere', {mode: 0o777}),
 );
-expectType<string>(makeDirSync('path/to/somewhere', {fs}));
-expectType<string>(makeDirSync('path/to/somewhere', {fs: gfs}));
+expectType<string>(makeDirectorySync('path/to/somewhere', {fs}));
+expectType<string>(makeDirectorySync('path/to/somewhere', {fs: gfs}));

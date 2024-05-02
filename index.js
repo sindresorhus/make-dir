@@ -1,10 +1,7 @@
-'use strict';
-const fs = require('fs');
-const path = require('path');
-const {promisify} = require('util');
-const semverGte = require('semver/functions/gte');
-
-const useNativeRecursiveOption = semverGte(process.version, '10.12.0');
+import process from 'node:process';
+import fs from 'node:fs';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 
 // https://github.com/nodejs/node/issues/8987
 // https://github.com/libuv/libuv/pull/1088
@@ -23,12 +20,12 @@ const checkPath = pth => {
 const processOptions = options => {
 	const defaults = {
 		mode: 0o777,
-		fs
+		fs,
 	};
 
 	return {
 		...defaults,
-		...options
+		...options,
 	};
 };
 
@@ -43,19 +40,16 @@ const permissionError = pth => {
 	return error;
 };
 
-const makeDir = async (input, options) => {
+export async function makeDirectory(input, options) {
 	checkPath(input);
 	options = processOptions(options);
 
-	const mkdir = promisify(options.fs.mkdir);
-	const stat = promisify(options.fs.stat);
-
-	if (useNativeRecursiveOption && options.fs.mkdir === fs.mkdir) {
+	if (options.fs.mkdir === fs.mkdir) {
 		const pth = path.resolve(input);
 
-		await mkdir(pth, {
+		await fsPromises.mkdir(pth, {
 			mode: options.mode,
-			recursive: true
+			recursive: true,
 		});
 
 		return pth;
@@ -63,7 +57,7 @@ const makeDir = async (input, options) => {
 
 	const make = async pth => {
 		try {
-			await mkdir(pth, options.mode);
+			await fsPromises.mkdir(pth, options.mode);
 
 			return pth;
 		} catch (error) {
@@ -86,7 +80,7 @@ const makeDir = async (input, options) => {
 			}
 
 			try {
-				const stats = await stat(pth);
+				const stats = await fsPromises.stat(pth);
 				if (!stats.isDirectory()) {
 					throw new Error('The path is not a directory');
 				}
@@ -99,20 +93,18 @@ const makeDir = async (input, options) => {
 	};
 
 	return make(path.resolve(input));
-};
+}
 
-module.exports = makeDir;
-
-module.exports.sync = (input, options) => {
+export function makeDirectorySync(input, options) {
 	checkPath(input);
 	options = processOptions(options);
 
-	if (useNativeRecursiveOption && options.fs.mkdirSync === fs.mkdirSync) {
+	if (options.fs.mkdirSync === fs.mkdirSync) {
 		const pth = path.resolve(input);
 
 		fs.mkdirSync(pth, {
 			mode: options.mode,
-			recursive: true
+			recursive: true,
 		});
 
 		return pth;
@@ -152,4 +144,4 @@ module.exports.sync = (input, options) => {
 	};
 
 	return make(path.resolve(input));
-};
+}
