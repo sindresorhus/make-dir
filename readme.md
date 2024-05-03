@@ -9,10 +9,10 @@
 
 - Supports a custom `fs` implementation.
 
-### Advantages over [`mkdirp`](https://github.com/substack/node-mkdirp)
+### Advantages over [`mkdirp`](https://github.com/isaacs/node-mkdirp)
 
 - Promise API *(Async/await ready!)*
-- Fixes many `mkdirp` issues: [#96](https://github.com/substack/node-mkdirp/pull/96) [#70](https://github.com/substack/node-mkdirp/issues/70) [#66](https://github.com/substack/node-mkdirp/issues/66)
+- Fixes many `mkdirp` issues
 - CI-tested on macOS, Linux, and Windows
 - Actively maintained
 - Doesn't bundle a CLI
