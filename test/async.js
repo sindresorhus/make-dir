@@ -118,6 +118,33 @@ test.serial('handles invalid path characters', async t => {
 	});
 });
 
+test('preserves EACCES error when parent directory lacks execute permission', async t => {
+	if (process.platform === 'win32') {
+		t.pass('Skip on Windows');
+		return;
+	}
+
+	const parentDirectory = path.join(temporaryDirectory(), 'no-execute-async');
+	const targetPath = path.join(parentDirectory, 'subdir');
+
+	// Create parent directory and remove execute permission
+	fs.mkdirSync(parentDirectory);
+	fs.chmodSync(parentDirectory, 0o644); // Read-write, no execute
+
+	const expectedError = {
+		code: 'EACCES',
+		message: /permission denied/,
+	};
+
+	// Test both default fs and custom fs
+	await t.throwsAsync(makeDirectory(targetPath), expectedError);
+	await t.throwsAsync(makeDirectory(targetPath, customFsOptions), expectedError);
+
+	// Cleanup
+	fs.chmodSync(parentDirectory, 0o755);
+	fs.rmSync(parentDirectory, {recursive: true});
+});
+
 if (process.platform === 'win32') {
 	test('handles non-existent root', async t => {
 		const expectedError = {
