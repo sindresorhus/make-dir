@@ -2,6 +2,15 @@ import process from 'node:process';
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const toPath = urlOrPath => {
+	if (urlOrPath instanceof URL) {
+		return fileURLToPath(urlOrPath);
+	}
+
+	return urlOrPath;
+};
 
 // https://github.com/nodejs/node/issues/8987
 // https://github.com/libuv/libuv/pull/1088
@@ -41,6 +50,7 @@ const permissionError = pth => {
 };
 
 export async function makeDirectory(input, options) {
+	input = toPath(input);
 	checkPath(input);
 	options = processOptions(options);
 
@@ -96,6 +106,7 @@ export async function makeDirectory(input, options) {
 }
 
 export function makeDirectorySync(input, options) {
+	input = toPath(input);
 	checkPath(input);
 	options = processOptions(options);
 

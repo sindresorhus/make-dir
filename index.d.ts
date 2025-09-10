@@ -46,7 +46,7 @@ console.log(paths);
 // ]
 ```
 */
-export function makeDirectory(path: string, options?: Options): Promise<string>;
+export function makeDirectory(path: string | URL, options?: Options): Promise<string>;
 
 /**
 Synchronously make a directory and its parents if needed - Think `mkdir -p`.
@@ -64,4 +64,4 @@ console.log(path);
 //=> '/Users/sindresorhus/fun/unicorn/rainbow/cake'
 ```
 */
-export function makeDirectorySync(path: string, options?: Options): string;
+export function makeDirectorySync(path: string | URL, options?: Options): string;

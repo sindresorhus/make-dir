@@ -81,7 +81,7 @@ Returns the path to the created directory.
 
 #### path
 
-Type: `string`
+Type: `string | URL`
 
 The directory to create.
 

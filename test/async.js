@@ -1,6 +1,7 @@
 import process from 'node:process';
 import fs from 'node:fs';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 import test from 'ava';
 import {temporaryDirectory, temporaryFile} from 'tempy';
 import gracefulFs from 'graceful-fs';
@@ -116,6 +117,22 @@ test.serial('handles invalid path characters', async t => {
 	Object.defineProperty(process, 'platform', {
 		value: platform,
 	});
+});
+
+test('accepts URL instance', async t => {
+	const directory = getFixture();
+	const urlPath = pathToFileURL(directory);
+	const madeDirectory = await makeDirectory(urlPath);
+	t.true(madeDirectory.length > 0);
+	assertDirectory(t, madeDirectory);
+});
+
+test('accepts URL instance with custom fs', async t => {
+	const directory = getFixture();
+	const urlPath = pathToFileURL(directory);
+	const madeDirectory = await makeDirectory(urlPath, customFsOptions);
+	t.true(madeDirectory.length > 0);
+	assertDirectory(t, madeDirectory);
 });
 
 test('preserves EACCES error when parent directory lacks execute permission', async t => {

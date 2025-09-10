@@ -1,6 +1,7 @@
 import process from 'node:process';
 import fs from 'node:fs';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 import test from 'ava';
 import {temporaryDirectory, temporaryFile} from 'tempy';
 import gracefulFs from 'graceful-fs';
@@ -105,6 +106,22 @@ test('handles null bytes in path', t => {
 	});
 
 	t.regex(error.code, /ERR_INVALID_ARG_VALUE|ENOENT/);
+});
+
+test('accepts URL instance', t => {
+	const directory = getFixture();
+	const urlPath = pathToFileURL(directory);
+	const madeDirectory = makeDirectorySync(urlPath);
+	t.true(madeDirectory.length > 0);
+	assertDirectory(t, madeDirectory);
+});
+
+test('accepts URL instance with custom fs', t => {
+	const directory = getFixture();
+	const urlPath = pathToFileURL(directory);
+	const madeDirectory = makeDirectorySync(urlPath, customFsOptions);
+	t.true(madeDirectory.length > 0);
+	assertDirectory(t, madeDirectory);
 });
 
 test('preserves EACCES error when parent directory lacks execute permission', t => {
